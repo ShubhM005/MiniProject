@@ -58,7 +58,6 @@ public class Quiz extends MainPage {
 		
 		ConnectionDB1 ct = new ConnectionDB1();
 		con = ct.connectTo();
-		this.marks=0;
 		try {
 
 			ps = con.prepareStatement(
@@ -66,34 +65,33 @@ public class Quiz extends MainPage {
 			ResultSet rs = ps.executeQuery();
 			int queno = 1;
 			while (rs.next() && queno < 11) {
+
 				System.out.println(queno + ". " + rs.getString(1));
 				System.out.println(rs.getString(2));
 				System.out.println(rs.getString(3));
 				System.out.println(rs.getString(4));
 				System.out.println(rs.getString(5));
-			Quiz q=new Quiz();
-			q.Anscheck();
-			int c = Character.compare(a, rs.getString(6).charAt(0));
-			if (c == 0) {
-				marks++;
+				char a=Quiz.Anscheck();
+				int c = Character.compare(a, rs.getString(6).charAt(0));
+				if (c == 0) {
+					marks++;
+				}
+				queno++;
 			}
-			queno++;}
-		
-		ps.close();
-		ps = con.prepareStatement("update javastudent set Marks=? where Roll_Num=?");
-		ps.setInt(1, this.marks);
-		ps.setInt(2, roll);
-		ps.execute();
-		System.out.println("Name of student : " + name + "" + " with Roll number: " + roll);
-		System.out.println("Answers submitted successfully.");
-		this.back();
-		sc.close();
-			
+			ps.close();
+			ps = con.prepareStatement("update javastudent set Marks=? where Roll_Num=?");
+			ps.setInt(1, this.marks);
+			ps.setInt(2, roll);
+			ps.execute();
+			System.out.println("Name of student : " + name + "" + " with Roll number: " + roll);
+			System.out.println("Answers submitted successfully.");
+			this.back();
+			sc.close();
 		} catch (Exception e) {
 			System.out.println(e);
 			this.checkstudent();
 		} finally {
-			 
+			sc.close();
 			try {
 				con.close();
 				ps.close();
@@ -101,20 +99,14 @@ public class Quiz extends MainPage {
 				System.out.println(e);
 			}
 		}
-	} public void Anscheck() {
-		 Scanner sc = new Scanner(System.in);
-			System.out.println("Enter answer:");
-			char a = sc.next().charAt(0);
-			if(a=='a'||a=='b'||a=='c'||a=='d') {
-			 
-			}
-			else {
-				System.out.println("Invalid Answer.");
-				this.Anscheck();
-			}
+	}
 	
-			sc.close();	
-	 }
+	public static char Anscheck() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter answer:");
+		char a = sc.next().charAt(0);
+		return a=(a=='a'||a=='b'||a=='c'||a=='d')? a:Anscheck();
+	}
 
 	public void back() {
 		Scanner sc = new Scanner(System.in);
